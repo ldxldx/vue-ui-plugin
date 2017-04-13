@@ -7,7 +7,7 @@ Validate.install = function (Vue, option) {
         }
         let args,method,timer;
         args = Object.assign({
-            obj: '',//一个inputContent对象
+            form: '',//一个inputContent对象
             rules: {},//一个规则对象
             message: {},//一个提示文案对象
             duration:2000,//错误提示显示时间
