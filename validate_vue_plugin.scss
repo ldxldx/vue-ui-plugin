@@ -1,0 +1,65 @@
+.vue-toast{
+  $height:40px;
+  min-width: 200px;
+  height: $height;
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0 50px;
+  font-size: 14px;
+  color: #8391a5;
+  background: #fff;
+  box-shadow: 1px 4px 10px #e1e1e1;
+  border-radius: 3px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  &::before,&::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: $height + 2px;
+    height: $height;
+  }
+  &::before{
+    z-index: 10;
+    background: #ff4949;
+  }
+  &::after{
+    z-index: 20;
+    content: "X";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 16px;
+  }
+  &.toast-top{
+    top: 10%;
+  }
+}
+@keyframes inMessage {
+  0%{
+    opacity: 0;
+    top: 0;
+  }
+  30%{
+    opacity: .3;
+    top: 2%;
+  }
+  100%{
+    opacity: 1;
+    top: 5%;
+  }
+}
+@keyframes outMessage {
+  0%{
+    opacity: 1;
+    top: 5%;
+  }
+  100%{
+    opacity: 0;
+    top: 0;
+  }
+}
