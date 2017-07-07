@@ -1,0 +1,66 @@
+@import "../../../sass/common/function";
+
+.msg-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  &.in{
+    animation: inAnimate linear 1s forwards;
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    background: black;
+    opacity: .3;
+  }
+  .msg-block {
+    position: relative;
+    z-index: 10;
+    min-width: 30%;
+    max-width: 60%;
+    font-size: rem(28);
+    color: black;
+    background: #fff;
+    border-radius: rem(16);
+    .msg-con {
+      padding: rem(10) rem(15) rem(15);
+      text-align: center;
+      word-break: break-all;
+    }
+    .msg-btn-item {
+      width: 100%;
+      display: flex;
+    }
+    .confirm, .cancel {
+      width: 100%;
+      text-align: center;
+    }
+    .confirm {
+      border-radius: 0 0 0 rem(16);
+    }
+    .cancel {
+      border-radius: 0 0 rem(16) 0;
+    }
+  }
+}
+
+@keyframes inAnimate {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
