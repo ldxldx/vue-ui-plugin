@@ -1,4 +1,4 @@
-require('./vue-plugin.scss');
+require('./loading.scss');
 const $loadingTemplate = `
     <div class="msg-item in" v-if="show">
         <div class="msg-block">
@@ -11,6 +11,7 @@ const $loadingTemplate = `
     </div>
 `;
 const plugin = {
+    name : 'l-loading',
     install  (Vue, option) {
         Vue.prototype.$loading = (op = {
                                       text: '',

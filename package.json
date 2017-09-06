@@ -1,7 +1,7 @@
 {
-  "name": "greenProject",
+  "name": "ui",
   "version": "1.0.0",
-  "description": "绿色供应链大会报名-找原料网",
+  "description": "moblie-ui-vue-plugin",
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.10.1",
@@ -40,7 +40,6 @@
     "webpack-dev-server": "^2.4.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --hot --inline"
   },
   "repository": {
@@ -48,9 +47,8 @@
     "url": "https://git.coding.net/ldxldx/studentCard.git"
   },
   "keywords": [
-    "找原料网",
-    "绿色供应链大会"
+    "ui-vue-plugin"
   ],
-  "author": "gangli-ldx",
+  "author": "ldx",
   "license": "ISC"
 }
