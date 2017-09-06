@@ -4,7 +4,7 @@ Vue.use(lComponent);
 const APP = new Vue({
     el:'#app',
     template:`<div>
-           <l-button>按钮</l-button>        
+           <l-button type="success"><span>按钮</span></l-button>  
     </div>`,
     data:{
 
