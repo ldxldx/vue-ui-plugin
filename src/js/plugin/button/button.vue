@@ -1,5 +1,5 @@
 <template>
-    <button @click="rippleClick" class="__cov-button-ripple"
+    <button @click="rippleClick" class="__my-button-ripple"
             :class="{
                 [size]:size,
             'disabled':disabled,
@@ -7,12 +7,12 @@
             }"
             :disabled="disabled">
         <slot></slot>
-        <span class="__cov-ripple" :class="{'animate': ripple_button.animate}" :style="ripple_button.style"></span>
+        <span class="__my-ripple" :class="{'animate': ripple_button.animate}" :style="ripple_button.style"></span>
     </button>
 </template>
 <script>
     export default {
-        name:'l-button',
+        name:'my-button',
         data () {
             return {
                 ripple_button: {
@@ -48,25 +48,25 @@
         methods: {
             rippleClick (e) {
                 if (this.ripple_button.animate || this.disabled) return;
-                this.ripple_button.animate = true;
-                let button = e.target,ripple = button.lastChild;
-                if (button.classList[0] === '__cov-button-ripple') {
-                    let d = Math.max(button.offsetHeight, button.offsetWidth) + 'px',
-                        x = (e.layerX - ripple.offsetWidth / 2  ) + 'px',
-                        y = (e.layerY - ripple.offsetHeight / 2 ) + 'px';
+                let button = e.target;
+                if (button.classList[0] === '__my-button-ripple') {
+                    let d = Math.max(button.offsetHeight, button.offsetWidth),
+                        x = (e.layerX - d / 2  ) + 'px',
+                        y = (e.layerY - d / 2 ) + 'px';
                     this.ripple_button.style = {
-                        height: d ,
-                        width: d ,
+                        height: d + 'px',
+                        width: d + 'px' ,
                         top: y ,
                         left: x ,
                     }
+                    this.ripple_button.animate = true;
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            this.ripple_button.animate = false;
+                            this.$emit('click')
+                        }, 660);
+                    });
                 }
-                this.$nextTick(() => {
-                    setTimeout(() => {
-                        this.ripple_button.animate = false;
-                        this.$emit('click')
-                    }, 660);
-                });
             }
         }
     }
@@ -74,7 +74,7 @@
 
 <style lang="scss" scoped>
     @import "../sass/function";
-    .__cov-button-ripple {
+    .__my-button-ripple {
         border: none;
         outline: none;
         border-radius: 2px;
@@ -89,6 +89,15 @@
         display: flex;
         justify-content: center;
         align-content: center;
+        &::before{
+            content: '';
+            position: absolute;
+            z-index: 1;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            top: 0;
+        }
         /*default*/
         padding-left: rem(60);
         padding-right: rem(60);
@@ -151,19 +160,18 @@
             cursor: not-allowed;
         }
     }
-    .__cov-ripple {
+    .__my-ripple {
         display: block;
         position: absolute;
-        top: 50%;
-        left: 50%;
+        z-index: 10;
         background: hsla(0, 0%, 65%, 0.66);
         border-radius: 100%;
         transform: scale(0);
         &.animate {
-            animation: button_ripple .65s linear;
+            animation: __my-button_ripple .65s linear;
         }
     }
-    @keyframes button_ripple {
+    @keyframes __my-button_ripple {
         100% {
             opacity: 0;
             transform: scale(2.5);
