@@ -1,10 +1,10 @@
 import Vue from 'vue';
-import lComponent from '../plugin/components';
-Vue.use(lComponent);
+import MyUikit from '../plugin/MyUikit';
+Vue.use(MyUikit);
 const APP = new Vue({
     el:'#app',
     template:`<div>
-           <l-button type="success"><span>按钮</span></l-button>  
+           <my-button type="success"><span>按钮</span></my-button>  
     </div>`,
     data:{
 
