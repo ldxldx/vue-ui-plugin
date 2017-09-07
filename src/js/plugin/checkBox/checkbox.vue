@@ -9,7 +9,7 @@
 </template>
 <script>
     export default {
-        name : 'l-checkBox',
+        name : 'my-checkBox',
         data(){
             return {
                 ripple_checkbox: {

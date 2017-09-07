@@ -1,9 +1,10 @@
 <template>
-    <button @click="rippleClick" class="__my-button-ripple"
+    <button @click="rippleClick" class="__my-buttonUiKit"
             :class="{
                 [size]:size,
             'disabled':disabled,
-                [type]:type
+                [type]:type,
+                'fullWidth':fullWidth
             }"
             :disabled="disabled">
         <slot></slot>
@@ -21,6 +22,9 @@
                     style:null
                 }
             }
+        },
+        mounted(){
+
         },
         props:{
             size:{
@@ -43,7 +47,8 @@
             disabled:{
                 type:Boolean,
                 default:false
-            }
+            },
+            fullWidth:Boolean,
         },
         methods: {
             rippleClick (e) {
@@ -74,7 +79,7 @@
 
 <style lang="scss" scoped>
     @import "../sass/function";
-    .__my-button-ripple {
+    .__my-buttonUiKit {
         border: none;
         outline: none;
         border-radius: 2px;
@@ -127,6 +132,9 @@
             padding-right: rem(48);
             height: rem(36);
             font-size: rem(24);
+        }
+        &.fullWidth {
+            width: 100%;
         }
         /*bgc color*/
         background-color: #3f51b5;
