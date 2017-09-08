@@ -7,6 +7,7 @@ const APP = new Vue({
     el:'#app',
     template:`<div>
         <my-checkbox>多选框</my-checkbox>
+        
     </div>`,
     data:{
         test:null
