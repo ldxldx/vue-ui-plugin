@@ -6,14 +6,7 @@ Vue.use(MyUikit);
 const APP = new Vue({
     el:'#app',
     template:`<div>
-        <my-input 
-            v-model="test"
-            label="姓名"
-            placeholder="请输入姓名"></my-input>
-            <my-input 
-            v-model="test"
-            label="姓名"
-            placeholder="请输入姓名"></my-input>
+        <my-checkbox>多选框</my-checkbox>
     </div>`,
     data:{
         test:null

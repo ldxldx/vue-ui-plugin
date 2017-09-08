@@ -11,7 +11,11 @@
                     <span v-if="required">*</span>
                     {{label}}
                 </label>
+                <div class="__my-input-input_before" v-if="focus && $slots.before">
+                    <slot name="before"></slot>
+                </div>
                 <input
+                        v-if="focus"
                         class="__my-input-input"
                         v-bind="$props"
                         :value="currentValue"
@@ -20,6 +24,9 @@
                         @input="handleInput"
                         @change="handleChange"
                         @blur="handleBlur"/>
+                <div class="__my-input-input_after" v-if="focus && $slots.after">
+                    <slot name="after"></slot>
+                </div>
                 <span class="__my-line"
                       :class="[ripple_input.animate]"></span>
             </div>
@@ -79,10 +86,17 @@
             },
         },
         methods:{
-            handleClick(){
+            handleClick(event){
               if ( this.disabled ) return;
               this.ripple_input.animate = 'lineIn';
               this.focus = true;
+              setTimeout(()=>{
+                  if ( event.target.classList[0] === '__my-inputUiKit') {
+                      event.target.querySelector('.__my-input-input').focus();
+                  } else {
+                      event.target.parentNode.querySelector('.__my-input-input').focus()
+                  }
+              },200)
             },
             handleInput(event){
                 const value = event.target.value;
@@ -120,8 +134,11 @@
     @import "../sass/variable";
     @import "../sass/function";
     .__my-inputUiKit {
+        height: rem(104);
         margin: rem(38) 0 rem(10);
         position: relative;
+        display: flex;
+        align-items: center;
         .__my-inputUiKit-label {
             color: rgba(0, 0, 0, .38);
             cursor: text;
@@ -146,10 +163,17 @@
             font-size: rem(32);
             height: rem(72);
             line-height: rem(40);
-            padding: rem(16) 0 rem(10);
+            padding: rem(16) 0 rem(10) rem(5);
             &::-webkit-input-placeholder {
                 color: rgba(0, 0, 0, .38);
             }
+        }
+        .__my-input-input_before,.__my-input-input_after {
+            height: rem(72);
+            font-size: rem(32);
+            display: flex;
+            align-items: center;
+            color: #97a8be;
         }
         .__my-line{
             position: absolute;
@@ -196,7 +220,7 @@
         &.focus {
             .__my-inputUiKit-label {
                 color: #3f51b5;
-                transform: scale(.85714, .85714) translate(rem(-10),rem(-54));
+                transform: scale(.65714, .65714) translate(rem(-20),rem(-74));
             }
         }
         &.disabled {
