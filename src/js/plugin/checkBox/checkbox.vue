@@ -1,15 +1,15 @@
 <template>
-    <div class="__cov_checkbox_block" @click="rippleClick">
-        <p class="__cov_checkbox" :class="{active:ripple_checkbox.active}">
-            <i class="__cov_checkbox_icon iconfont">&#xe671;</i>
-            <span class="__cov_checkbox__ripple" :class="{animate:ripple_checkbox.animate}"></span>
+    <div class="__my_checkbox_block" @click="rippleClick">
+        <p class="__my_checkbox" :class="{active:ripple_checkbox.active}">
+            <i class="__my_checkbox_icon iconfont">&#xe671;</i>
+            <span class="__my_checkbox__ripple" :class="{animate:ripple_checkbox.animate}"></span>
         </p>
         <slot></slot>
     </div>
 </template>
 <script>
     export default {
-        name : 'my-checkBox',
+        name : 'my-checkbox',
         data(){
             return {
                 ripple_checkbox: {
@@ -32,18 +32,18 @@
     }
 </script>
 <style lang="scss" scoped>
-    .__cov_checkbox_block {
+    .__my_checkbox_block {
         display: flex;
         align-items: center;
         font-size: 14px;
         cursor: pointer;
-        .__cov_checkbox {
+        .__my_checkbox {
             width: 14px;
             height: 14px;
             border: 2px solid rgba(0,0,0,.54);
             margin-right: 5px;
             position: relative;
-            .__cov_checkbox_icon {
+            .__my_checkbox_icon {
                 width: 100%;
                 height: 100%;
                 color: #fff;
@@ -57,12 +57,12 @@
             &.active {
                 transition: border .5s linear;
                 border-color: #ff4081;
-                .__cov_checkbox_icon {
+                .__my_checkbox_icon {
                     transition: transform .1s linear;
                     transform: scale(1);
                 }
             }
-            .__cov_checkbox__ripple {
+            .__my_checkbox__ripple {
                 background-color: #ff4081;
                 border-radius: 50%;
                 position: absolute;

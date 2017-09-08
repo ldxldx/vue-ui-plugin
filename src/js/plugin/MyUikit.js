@@ -1,11 +1,12 @@
+require('./sass/com.scss');
 import Button from './button/button.vue';
-import CheckBox from './checkBox/checkbox.vue';
+import Checkbox from './checkBox/checkbox.vue';
 import Loading from './loading/loading';
 import Input from './input/input.vue';
 
 const components = [
     Button,
-    CheckBox,
+    Checkbox,
     Input,
 ];
 const install = function (Vue,opts = {}) {
