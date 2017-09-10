@@ -5,12 +5,18 @@ import MyUikit from '../plugin/MyUikit';
 Vue.use(MyUikit);
 const APP = new Vue({
     el:'#app',
-    template:`<div>
-        <my-checkbox>多选框</my-checkbox>
-        
+    template:`<div style="padding: 30px">
+        <my-checkbox-group>
+            <my-checkbox v-model="test1">多选框1</my-checkbox>
+            <my-checkbox v-model="test2">多选框2</my-checkbox>
+            <my-checkbox v-model="test3">多选框3</my-checkbox>
+        </my-checkbox-group>
+       
     </div>`,
     data:{
-        test:null
+        test1:true,
+        test2:true,
+        test3:true,
     },
     mounted(){
 

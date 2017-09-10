@@ -1,68 +1,102 @@
 <template>
-    <div class="__my_checkbox_block" @click="rippleClick">
-        <p class="__my_checkbox" :class="{active:ripple_checkbox.active}">
-            <i class="__my_checkbox_icon iconfont">&#xe671;</i>
-            <span class="__my_checkbox__ripple" :class="{animate:ripple_checkbox.animate}"></span>
-        </p>
+    <label class="__my-checkboxUiKit_block"
+           :class="{
+               'disabled':disabled,
+               'checked':currentValue
+           }">
+        <input type="checkbox" class="__my-check_input"
+               :id="id"
+               :name="name"
+               :value="currentValue"
+               @click="handelClick"
+               @blur="handelBlur"
+               @focus="handelFocus">
+        <span class="__my-checkbox">
+            <i class="__my-checkbox_icon iconfont">&#xe671;</i>
+            <span class="__my-checkbox__ripple" :class="{animate:ripple_checkbox.animate}"></span>
+        </span>
         <slot></slot>
-    </div>
+    </label>
 </template>
 <script>
-    export default {
-        name : 'my-checkbox',
-        data(){
-            return {
-                ripple_checkbox: {
-                    active: false,
-                    animate: false,
-                }
-            }
-        },
-        methods: {
-            rippleClick(e){
-                this.ripple_checkbox.active = !this.ripple_checkbox.active;
-                this.$emit('change',this.ripple_checkbox.active);
-                if(!this.ripple_checkbox.active) return;
-                this.ripple_checkbox.animate = true;
-                setTimeout(()=>{
-                    this.ripple_checkbox.animate = false;
-                },500);
-            },
+  export default {
+    name: 'my-checkbox',
+    componentName:'my-checkbox',
+    data(){
+      return {
+        currentValue: this.value,
+        ripple_checkbox: {
+          animate: false,
         }
+      }
+    },
+    props: {
+      id: [String, Number],
+      name: [String, Number],
+      value: {
+        type: Boolean,
+        required: true
+      },
+      disabled: Boolean,
+      checkColor: String,//选中后的颜色（暂时不做）
+    },
+    methods: {
+      handelClick(e){
+        console.log(e.target)
+        if (this.disabled) return;
+        this.currentValue = !this.currentValue;
+        this.$emit('input', this.currentValue);
+        this.$emit('change', this.currentValue);
+        if (!this.currentValue) return;
+        this.ripple_checkbox.animate = true;
+        setTimeout(() => {
+          this.ripple_checkbox.animate = false;
+        }, 500);
+      },
+      handelBlur(e){
+        this.$emit('blur', e);
+      },
+      handelFocus(e){
+        this.$emit('focus', e);
+      }
     }
+  }
 </script>
 <style lang="scss" scoped>
-    .__my_checkbox_block {
-        display: flex;
+    @import "../sass/function";
+    @import "../sass/variable";
+
+    .__my-checkboxUiKit_block {
+        display: inline-flex;
         align-items: center;
-        font-size: 14px;
+        font-size: rem(28);
         cursor: pointer;
-        .__my_checkbox {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(0,0,0,.54);
-            margin-right: 5px;
+        position: relative;
+        .__my-check_input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            outline: none;
+            position: absolute;
+            z-index: -1;
+        }
+        .__my-checkbox {
+            width: rem(28);
+            height: rem(28);
+            border: rem(4) solid rgba(0, 0, 0, .54);
+            margin-right: rem(10);
             position: relative;
-            .__my_checkbox_icon {
+            .__my-checkbox_icon {
                 width: 100%;
                 height: 100%;
                 color: #fff;
-                font-size: 12px;
-                background: #ff4081;
+                font-size: rem(24);
                 display: flex;
                 align-items: center;
                 transform: scale(0);
                 will-change: transform;
             }
-            &.active {
-                transition: border .5s linear;
-                border-color: #ff4081;
-                .__my_checkbox_icon {
-                    transition: transform .1s linear;
-                    transform: scale(1);
-                }
-            }
-            .__my_checkbox__ripple {
+            .__my-checkbox__ripple {
                 background-color: #ff4081;
                 border-radius: 50%;
                 position: absolute;
@@ -73,7 +107,7 @@
                     height: 100%;
                     top: 0;
                     left: 0;
-                    animation: checkbox_ripple .5s cubic-bezier(.4,0,.2,1);
+                    animation: checkbox_ripple .5s cubic-bezier(.4, 0, .2, 1);
                 }
             }
             @keyframes checkbox_ripple {
@@ -81,6 +115,26 @@
                     opacity: 0;
                     transform: scale(3);
                 }
+            }
+        }
+        &.checked {
+            .__my-checkbox {
+                transition: border .5s linear;
+                border-color: $defaultColor;
+            }
+            .__my-checkbox_icon {
+                background: $defaultColor;
+                transition: transform .1s linear;
+                transform: scale(1.2);
+            }
+        }
+        &.disabled {
+            color: #d1dbe5;
+            .__my-checkbox {
+                border-color: #d1dbe5;
+            }
+            .__my-checkbox_icon {
+                background: #d1dbe5;
             }
         }
     }
