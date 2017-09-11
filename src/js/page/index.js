@@ -7,9 +7,9 @@ const APP = new Vue({
     el:'#app',
     template:`<div style="padding: 30px">
         <my-checkbox-group>
-            <my-checkbox v-model="test1">多选框1</my-checkbox>
-            <my-checkbox v-model="test2">多选框2</my-checkbox>
-            <my-checkbox v-model="test3">多选框3</my-checkbox>
+            <my-checkbox label="多选框1"></my-checkbox>
+            <my-checkbox label="多选框2"></my-checkbox>
+            <my-checkbox label="多选框3"></my-checkbox>
         </my-checkbox-group>
        
     </div>`,

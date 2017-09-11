@@ -15,71 +15,93 @@
             <i class="__my-checkbox_icon iconfont">&#xe671;</i>
             <span class="__my-checkbox__ripple" :class="{animate:ripple_checkbox.animate}"></span>
         </span>
-        <slot></slot>
+        <span v-if="parent">
+            <slot></slot>
+        </span>
+        <span v-else>{{label}}</span>
     </label>
 </template>
 <script>
-    export default {
-        name: 'my-checkbox',
-        componentName: 'my-checkbox',
-        data(){
-            return {
-                currentValue: this.value,
-                ripple_checkbox: {
-                    animate: false,
-                }
-            }
-        },
-        props: {
-            id: [String, Number],
-            name: [String, Number],
-            value: Boolean,
-            disabled: Boolean,
-            checkColor: String,//选中后的颜色（暂时不做）
-        },
-        computed: {
-            //检查有无group父组件
-            isGroup(){
-                let parent = this.$parent;
-                while (parent) {
-                    if (parent.$options._componentTag === 'my-checkbox-group') {
-                        this._parent = parent;
-                        return true;
-                    } else {
-                        parent = parent.$parent;
-                    }
-                }
-                return false;
-            },
-            //获取value的值
-            //组件初始化值
-            //给予组件使用时 获取和修改value 时的方法
-            //获取 父组件value||当前value
-            //修改 满足父组件的min/max 满足的情况下更新value 并广播到父组件
-        },
-        mounted(){
-            console.log(this.$parent)
-        },
-        methods: {
-            handelClick(e){
-                if (this.disabled) return;
-                this.currentValue = !this.currentValue;
-                this.$emit('input', this.currentValue);
-                this.$emit('change', this.currentValue);
-                if (!this.currentValue) return;
-                this.ripple_checkbox.animate = true;
-                setTimeout(() => {
-                    this.ripple_checkbox.animate = false;
-                }, 500);
-            },
-            handelBlur(e){
-                this.$emit('blur', e);
-            },
-            handelFocus(e){
-                this.$emit('focus', e);
-            }
+  export default {
+    name: 'my-checkbox',
+    componentName: 'my-checkbox',
+    data(){
+      return {
+        currentValue: this.value,
+        parent:null,//是否有check-group
+        ripple_checkbox: {
+          animate: false,
         }
+      }
+    },
+    props: {
+      id: [String, Number],
+      name: [String, Number],
+      value: Boolean,
+      label:{},
+      disabled: Boolean,
+      checkColor: String,//选中后的颜色（暂时不做）
+    },
+    computed: {
+      //检查有无group父组件
+      isGroup(){
+        let parent = this.$parent;
+        while (parent) {
+          if (parent.$options._componentTag === 'my-checkbox-group') {
+            this.parent = parent;
+            return true;
+          } else {
+            parent = parent.$parent;
+          }
+        }
+        return false;
+      },
+      //组件初始化值
+      isChecked(){
+        if ( typeof this.store === 'boolean') {
+          return this.store;
+        } else if ( this.store instanceof Array ) {
+          return this.store.indexOf(this.label) !== -1 ;
+        }
+      },
+      //获取 父组件value||当前value
+      store(){
+        return this.parent?this.parent.value:this.currentValue;
+      },
+      //给予组件使用时 获取和修改value 时的方法
+      currentProperty: {
+        get(){
+           return this.store()
+        },
+        set(){
+          //修改 满足父组件的min/max 满足的情况下更新value 并广播到父组件
+
+        }
+      },
+    },
+    mounted(){
+      console.log(this.$parent)
+    },
+    methods: {
+      handelClick(e){
+        if (this.disabled) return;
+        this.currentValue = !this.currentValue;
+        this.$emit('input', this.currentValue);
+        this.$emit('change', this.currentValue);
+        if (!this.currentValue) return;
+        this.ripple_checkbox.animate = true;
+        setTimeout(() => {
+          this.ripple_checkbox.animate = false;
+        }, 500);
+      },
+      handelBlur(e){
+        this.$emit('blur', e);
+      },
+      handelFocus(e){
+        this.$emit('focus', e);
+      }
     }
+  }
 </script>
 <style lang="scss" scoped>
     @import "../sass/function";
