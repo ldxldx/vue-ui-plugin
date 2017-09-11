@@ -19,11 +19,6 @@ gulp.task('default', ['fileinclude'], function () {
 /**
  * 发布
  */
-gulp.task('send', function () {
-    var svn_url = "/Users/gangli/1000PHCOM/zyl-mobile-res/src/activity/webAppAuth";
-    gulp.src('./dist/**/*')
-        .pipe(gulp.dest(svn_url + '/dist/'));
-});
 gulp.task('winSend', function () {
     var svn_url = "C:/files/zhaoyl/zyl-mobile-res/src/activity/webAppAuth";
     gulp.src('./dist/**/*')
