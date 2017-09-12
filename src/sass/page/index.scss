@@ -22,3 +22,22 @@
     }
   }
 }
+.view {
+  width: 100%;
+}
+.blockComponent {
+  display: flex;
+}
+.children_item {
+  display: flex;
+  flex-direction: column;
+  margin: 25px 20px;
+}
+.label {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.children_block {
+
+}
