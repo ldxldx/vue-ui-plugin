@@ -6,10 +6,8 @@
 <script>
     export default {
         name: 'my-checkbox-group',
-        componentName: 'MyCheckboxGroup',
         data(){
             return {
-                currentValue: this.value,
                 componentSwitch: false,
                 children: [],
             }
