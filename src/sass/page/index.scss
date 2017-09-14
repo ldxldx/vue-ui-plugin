@@ -31,13 +31,51 @@
 .children_item {
   display: flex;
   flex-direction: column;
-  margin: 25px 20px;
+  margin: 0 10px;
+  position: relative;
 }
 .label {
   display: flex;
   justify-content: center;
-  cursor: pointer;
+  margin: 0 10px;
+  position: relative;
+  transition: transform .1s linear;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  &>div{
+    padding: 5px 8px;
+    background: #3f51b5;
+    color: #eee;
+    border-radius: 4px;
+  }
+  &.aims{
+    transform: scale(1.2);
+  }
 }
 .children_block {
-
+  padding-top: 30px;
+  transition: transform .1s linear;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+  }
+  &.aims {
+    transform: scale(1.2);
+    &::before {
+      background: #eee;
+      opacity: .8;
+    }
+  }
 }
