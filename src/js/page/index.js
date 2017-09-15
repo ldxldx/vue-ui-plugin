@@ -67,7 +67,7 @@ Vue.component('blockComponent',{
 });
 const APP = new Vue({
   el: '#app',
-  template: `<div style="padding: 30px">
+  template: `<div class="container">
         <!--<my-checkbox-group v-model="group" :min="1" :max="2">-->
             <!--<my-checkbox label="多选框1" v-model="test1">多选框1</my-checkbox>-->
             <!--<my-checkbox label="多选框2" v-model="test2">多选框2</my-checkbox>-->
@@ -85,6 +85,7 @@ const APP = new Vue({
             @dragenter="dragenter" 
             @dragleave="dragleave" 
             @drop="drop"></blockComponent>
+        <canvas id="canvas"></canvas>
         </div>
     </div>`,
   data: {
@@ -167,7 +168,7 @@ const APP = new Vue({
         ]
       }
     ],
-    warehouse:{},//储存所有数据的扁平式仓库
+    warehouse:{},//储存所有数据的二维仓库
     dragStartStatus:false,//正在拖拽的状态
     dragDropStatus:false,//正在放置的状态
     eleDrag:null,//被拖拽元素信息
@@ -176,10 +177,12 @@ const APP = new Vue({
       id:null,
       className:null,
       type:null//append switch
-    },//目标元素 label/children
+    },//目标元素的信息
+    situation:null,// 0-互换 1-被拖拽元素作为目标元素的child
   },
   mounted(){
-    this.setWarehouse(this.view,0);
+    this.setWarehouse(JSON.parse(JSON.stringify(this.view)),0);
+    this.setCanvas();
   },
   methods: {
     handelClick(item){
@@ -191,6 +194,7 @@ const APP = new Vue({
      * @return {boolean}
      */
     dragstart(event){
+      //节流
       if (this.dragStatus) {
         return false
       };
@@ -212,6 +216,7 @@ const APP = new Vue({
      * @return {boolean}
      */
     dragend(event){
+      //清除此次拖拽的所有数据
       this.dragStatus = false;
       this.dragDropStatus = false;
       this.aimsTarget = {
@@ -219,7 +224,7 @@ const APP = new Vue({
         type:null,
         className:null,
       };
-      //清除此次拖拽的所有数据
+      this.situation = null;
       return false;
     },
     /**
@@ -246,8 +251,9 @@ const APP = new Vue({
       if (_target.classList[0] === 'label' || _target.classList[0] === 'children_block'){
         _parent = _target.parentNode;
         this.aimsTarget.className = _target.classList[0];
-      } else {
+      } else {//如不是label/children_block 则不执行以下逻辑以及不触发drop
         this.dragDropStatus = true;
+        this.situation = null;
         this.aimsTarget.id = null;
         this.aimsTarget.type = null;
         return false;
@@ -260,26 +266,32 @@ const APP = new Vue({
         this.dragDropStatus = false;
       }
       this.aimsTarget.id = Number(_parent.dataset.id);
-      if (Number(_parent.dataset.leave) === this.eleDrag.leave ) {//同级 只能移到label
+      if (Number(_parent.dataset.leave) === this.eleDrag.leave) {//同级
         //调换位置 放大label 改变label的背景颜色
-        if (this.aimsTarget.className === 'label') this.aimsTarget.type = 'switch';
-        //被拖拽作为目标的子集 放大children_block 改变children_block的背景颜色
-        if (this.aimsTarget.className === 'children_block') this.aimsTarget.type = 'append';
+        if (this.aimsTarget.className === 'label'){
+          this.aimsTarget.type = 'switch';
+          this.situation = 0;
+        } else if (this.aimsTarget.className === 'children_block') {
+          this.situation = 1;
+          this.aimsTarget.type = 'append';//被拖拽作为目标的子集 放大children_block 改变children_block的背景颜色
+        }
       } else if ( this.eleDrag.leave > Number(_parent.dataset.leave) && this.aimsTarget.className === 'children_block'){//低到高 只能移动children_block
         //被拖拽作为目标的子集 放大children_block 改变children_block的背景颜色
         if(this.warehouse[Number(_parent.dataset.id)].children){
           //被拖拽为目标子一级元素
-          // let _single = this.warehouse[Number(_parent.dataset.id)].children.filter(val=>{return val.id === this.eleDrag.id})
-          // if (_single.length > 0) {
-          //   this.aimsTarget.type = null;
-          //   return false;
-          // }
+          let _single = this.warehouse[Number(_parent.dataset.id)].children.filter(val=>{return val.id === this.eleDrag.id})
+          if (_single.length > 0) {
+            this.aimsTarget.type = null;
+            return false;
+          }
         }
+        this.situation = 1;
         this.aimsTarget.type = 'append';
       } else if (this.eleDrag.leave < Number(_parent.dataset.leave) && this.aimsTarget.className === 'children_block'){//高到低 非包含 只能移动children_block
         //被拖拽不包含目标
         if (!this.have(this.warehouse[this.eleDrag.id],{id:Number(_parent.dataset.id),leave:Number(_parent.dataset.leave)})){
           this.aimsTarget.type = 'append';
+          this.situation = 1;
         }
       }
       return true;
@@ -301,10 +313,12 @@ const APP = new Vue({
      * @param event
      */
     drop(event){
+      //节流
       if (this.dragDropStatus) {
         return false
       }
       this.dragDropStatus = true;
+      //target为label/children_block 信息都在其父元素上
       let _target = event.target.parentNode;
       //记录目标元素信息 即event
       this.aimsDrag = {
@@ -312,47 +326,86 @@ const APP = new Vue({
         id: Number(_target.dataset.id),
       }
       //处理
-      // this.reset();
+      this.setLocal();
       return true;
     },
     /**
-     * 交换位置
+     * 递归找到aimsDrag/eleDrag 进行交换/插入/删除
      */
-    reset(){
-      // 替换(携带子集) 互换(不携带子集) 作为子集
-      let min,max,status,have = false,target = this.aimsTarget === 'label',view = this.view;
-      if ( this.eleDrag.leave === this.aimsDrag.leave) {//同级
-        //替换
-        status = 0;// 0 同级
-        max = this.aimsDrag;
-        min = this.eleDrag;
-      } else if (this.eleDrag.leave > this.aimsDrag.leave){//不同级 max min 赋值 1 低->高
-        status = 1;
-        max = this.aimsDrag;
-        min = this.eleDrag;
-        //判断是否包含关系
-        have = this.have(max,min);
-      } else { //2 高->低
-        status = 2;
-        max = this.eleDrag;
-        min = this.aimsDrag;
-        //判断是否包含关系
-        have = this.have(max,min);
-      }
-      let loop = (val,cb)=> {
-        for (let i = 0; i < val.length; i++) {
-          if (val[i].leave === max.leave) {
-
-          } else if (val[i].children && val[i].children.length > 0){
-            loop(val[i].children);
+    setLocal(){
+      /**
+       * @param child
+       * @param cb
+       */
+      let loop = (child,cb)=>{
+        for(let i=0;i<child.length;i++){
+          if ( this.situation === 0 ) {//同级 互换
+            //分别找到目标元素、被拖拽元素 然后进行互换位置
+            if( child[i].leave === this.aimsDrag.leave  ){
+              if (child[i].id === this.aimsDrag.id){
+                child[i] = Object.assign(this.warehouse[this.eleDrag.id],{
+                  leave:child[i].leave
+                });
+              } else if (child[i].id === this.eleDrag.id) {
+                child[i] = Object.assign(this.warehouse[this.aimsDrag.id],{
+                  leave:child[i].leave
+                });
+              }
+            }
+          } else if ( this.situation === 1 || this.situation === 2 ){//低到高 高到低
+            //先将被拖拽元素加入到目标元素的children
+            //然后删除被拖拽元素的数据
+            if (child[i].leave === this.aimsDrag.leave && child[i].id === this.aimsDrag.id){
+              //将aimsDrag.children.push(eleDrag)
+              if (!child[i].children) {
+                this.$set(child[i],'children',[])
+              }
+              child[i].children.push(Object.assign(this.warehouse[this.eleDrag.id],{
+                leave:child[i].leave + 1
+              }));
+              // delete eleDrag
+              //找到eleDrag parent 删除eleDrag
+              let leaveArr = this.warehouse[this.eleDrag.id].leaveLine.split('_');
+              let _view = this.view;
+              for (let k=1;k<leaveArr.length;k++){
+                if( k === 1) {
+                  _view = _view[leaveArr[k]]
+                } else if(k <= leaveArr.length-2) {
+                  _view = _view.children[leaveArr[k]]
+                }
+              }
+              _view.children.splice(Number(leaveArr[leaveArr.length-1]),1)
+            }
+          }
+          if ( child[i].children && child[i].children instanceof Array && child[i].children.length > 0) {
+            loop(child[i].children)
           }
         }
+        cb && cb();
       }
-      loop(this.view)
+      loop(this.view,()=>{//处理完毕后重排仓库
+        this.setWarehouse(JSON.parse(JSON.stringify(this.view)),0);
+        //canvas重排
+
+      })
+    },
+    setCanvas(){
+      const canvas = document.getElementById('canvas');
+      if ( canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+        console.log(ctx)
+
+        ctx.beginPath();
+        ctx.moveTo(100,100);
+        ctx.lineTo(150,120);
+        ctx.lineTo(80,40);
+        ctx.stroke();
+      }
     },
     /**
-     * 二维化
+     * 递归目标数组 将所有逐级数据二维化
      * @param val
+     * @param lineNo 层级标记
      */
     setWarehouse(val,lineNo){
       for (let i=0;i<val.length;i++){
