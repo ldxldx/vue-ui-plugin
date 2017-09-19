@@ -1,21 +1,21 @@
 <template>
-    <label class="__my-checkboxUiKit_block"
+    <label class="__my-radioUiKit_block"
            :class="{
                'disabled':selfDisabled,
                'checked':isChecked
            }">
-        <input type="checkbox" class="__my-check_input"
+        <input type="radio" class="__my-radio_input"
                :id="id"
                :name="name"
                :value="isChecked"
                @click="handelClick"
                @blur="handelBlur"
                @focus="handelFocus">
-        <span class="__my-checkbox">
-            <i class="__my-checkbox_icon iconfont">&#xe671;</i>
-            <span class="__my-checkbox__ripple" :class="{animate:ripple_checkbox.animate}"></span>
+        <span class="__my-radio">
+            <i class="__my-radio_icon"></i>
+            <span class="__my-radio__ripple" :class="{animate:ripple_radio.animate}"></span>
         </span>
-        <span v-if="parent">{{label}}</span>
+        <span v-if="parent || label">{{label}}</span>
         <span v-else>
             <slot></slot>
         </span>
@@ -23,11 +23,11 @@
 </template>
 <script>
   export default {
-    name: 'my-checkbox',
+    name: 'my-radio',
     data(){
       return {
         parent: null,//是否有check-group
-        ripple_checkbox: {
+        ripple_radio: {
           animate: false,
         }
       }
@@ -35,17 +35,16 @@
     props: {
       id: [String, Number],
       name: [String, Number],
-      value: Boolean,
+      value: {},
       label: {},
       disabled: Boolean,
-      checkColor: String,//选中后的颜色（暂时不做）
     },
     computed: {
       //检查有无group父组件
       isGroup(){
         let parent = this.$parent;
         while (parent) {
-          if (parent.$options._componentTag === 'my-checkbox-group') {
+          if (parent.$options._componentTag === 'my-radio-group') {
             this.parent = parent;
             return true;
           } else {
@@ -58,8 +57,8 @@
       isChecked(){
         if (typeof this.store === 'boolean') {
           return this.store;
-        } else if (this.store instanceof Array) {
-          return this.store.indexOf(this.label) !== -1;
+        } else if (typeof this.store === 'string' || typeof this.store === 'number') {
+          return this.store === this.label;
         }
       },
       //获取 父组件value||当前value ( array || boolean )
@@ -72,27 +71,20 @@
     },
     methods: {
       handelClick(e){
-        if ( this.selfDisabled ) return;
-        let _allowChange = false;
+        if (this.selfDisabled || this.isChecked) return;
         //更新store
-        //修改 满足父组件的min/max 满足的情况下更新value 并广播到父组件(暂未发现必须要做广播的需要，所以直接修改$parent.value)
-        if ( this.isGroup ) { //val isArray
-          if (this.store.indexOf(this.label) === -1) { //不存在 change true
-            (this.parent.$props.max && this.store.length + 1 <= this.parent.$props.max && ( this.store.push( this.label ),_allowChange = true));
-          } else { //change false
-            (this.parent.$props.min && this.store.length - 1 >= this.parent.$props.min && ( this.store.splice(this.store.indexOf(this.label) , 1),_allowChange = true));
-          }
+        if ( this.isGroup ) {
+          this.parent.$emit('input',this.label)
+        } else if (typeof this.store === 'boolean'){
+          this.$emit('input', !this.value);
         } else {
-          this.store = !this.store;
-          _allowChange = true;
-          this.$emit('input', this.store);
+          this.$emit('input', this.label);
         }
-        //点击样式动画
-        if (!_allowChange) return;
         this.$emit('change', e);
-        this.ripple_checkbox.animate = true;
+        //点击样式动画
+        this.ripple_radio.animate = true;
         setTimeout(() => {
-          this.ripple_checkbox.animate = false;
+          this.ripple_radio.animate = false;
         }, 500);
       },
       handelBlur(e){
@@ -108,13 +100,13 @@
     @import "../sass/function";
     @import "../sass/variable";
 
-    .__my-checkboxUiKit_block {
+    .__my-radioUiKit_block {
         display: inline-flex;
         align-items: center;
         font-size: rem(28);
         cursor: pointer;
         position: relative;
-        .__my-check_input {
+        .__my-radio_input {
             opacity: 0;
             width: 0;
             height: 0;
@@ -122,23 +114,36 @@
             position: absolute;
             z-index: -1;
         }
-        .__my-checkbox {
+        .__my-radio {
             width: rem(28);
             height: rem(28);
-            border: rem(4) solid rgba(0, 0, 0, .54);
+            border: rem(3) solid rgba(0, 0, 0, .54);
+            border-radius: 50%;
             margin-right: rem(10);
             position: relative;
-            .__my-checkbox_icon {
+            .__my-radio_icon {
                 width: 100%;
                 height: 100%;
+                border-radius: 50%;
                 color: #fff;
                 font-size: rem(24);
                 display: flex;
                 align-items: center;
                 transform: scale(0);
                 will-change: transform;
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    width: 30%;
+                    height: 30%;
+                    border-radius: 50%;
+                    background-color: #fff;
+                }
             }
-            .__my-checkbox__ripple {
+            .__my-radio__ripple {
                 background-color: $defaultColor;
                 border-radius: 50%;
                 position: absolute;
@@ -149,10 +154,10 @@
                     height: 100%;
                     top: 0;
                     left: 0;
-                    animation: checkbox_ripple .5s cubic-bezier(.4, 0, .2, 1);
+                    animation: radio_ripple .5s cubic-bezier(.4, 0, .2, 1);
                 }
             }
-            @keyframes checkbox_ripple {
+            @keyframes radio_ripple {
                 100% {
                     opacity: 0;
                     transform: scale(3);
@@ -160,11 +165,11 @@
             }
         }
         &.checked {
-            .__my-checkbox {
+            .__my-radio {
                 transition: border .5s linear;
                 border-color: $defaultColor;
             }
-            .__my-checkbox_icon {
+            .__my-radio_icon {
                 background: $defaultColor;
                 transition: transform .1s linear;
                 transform: scale(1.2);
@@ -172,10 +177,10 @@
         }
         &.disabled {
             color: #d1dbe5;
-            .__my-checkbox {
+            .__my-radio {
                 border-color: #d1dbe5;
             }
-            .__my-checkbox_icon {
+            .__my-radio_icon {
                 background: #d1dbe5;
             }
         }
