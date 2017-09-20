@@ -44,7 +44,6 @@
     data(){
       return {
         focus: false,
-        currentValue: this.value,
         ripple_select: {
           animate: null,
         }
@@ -89,21 +88,16 @@
       handleInput(event){
         const value = event.target.value;
         this.$emit('input', value);
-        this.setCurrentValue(value);
+        this.setFocus(value);
       },
       handleChange(event){
         const value = event.target.value;
         this.$emit('change', value);
-        this.setCurrentValue(value);
+        this.setFocus(value);
       },
       handleBlur(){
         const value = event.target.value;
         this.$emit('blur', value);
-        this.setCurrentValue(value);
-      },
-      setCurrentValue(value){
-        if (value && this.currentValue === value) return;
-        this.currentValue = value;
         this.setFocus(value);
       },
       setFocus(value){
