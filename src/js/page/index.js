@@ -6,20 +6,18 @@ import MyUikit from '../plugin/MyUikit';
 Vue.use(MyUikit);
 const APP = new Vue({
   el: '#app',
-  template: `<div class="container" @click.self="handelClick">
-        <my-select v-model="radio" ref="select"></my-select>
-        <!--<select name="ide">-->
-            <!--<option value="xx"></option>-->
-            <!--<option value="yy"></option>-->
-            <!--<option value="kk"></option>-->
-        <!--</select>-->
+  template: `<div class="container">
+        <my-select label="这是个下拉框" v-model="radio" :options="options" placeholder="请点击选择"></my-select>
+        <my-input label="input"></my-input>
     </div>`,
   data: {
-    radio:null
+    radio:'选项1',
+    options:[{
+      label:'选项1',
+      value:1,
+    },'选项2','选项3','选项4',],
   },
   methods: {
-    handelClick(){
-      this.$refs.select.$emit('close');
-    }
+
   }
 });
