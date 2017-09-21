@@ -32,3 +32,9 @@
         <my-radio label="yyy"></my-radio>
         <my-radio label="kkk"></my-radio>
     </my-radio-group>
+
+    <my-radio label="kkk" v-model="xxx">yyy</my-radio> //优先显示label
+
+> ##### select
+
+        <my-select label="这是个下拉框" v-model="radio" :options="options" placeholder="请点击选择"></my-select>

@@ -7,7 +7,8 @@ import RadioGroup from './radio/radio-group.vue';
 import Loading from './loading/loading';
 import Input from './input/input.vue';
 import Select from './select/select.vue';
-import Option from './select/option.vue';
+import Option from './select/option.vue';//暂未开发
+import Picker from './picker/picker.vue';
 
 const components = [
   Button,
@@ -18,6 +19,7 @@ const components = [
   RadioGroup,
   Select,
   Option,
+  Picker,
 ];
 const install = function (Vue, opts = {}) {
   //======= 统一注册组件

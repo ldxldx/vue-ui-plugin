@@ -1,23 +1,19 @@
 import Vue from 'vue';
 import getZIndex from '../tools/getZIndex';//获取body子集的最大z-index
-class plugin {
+const ZINDEX = getZIndex();
+class maskLayer {
   constructor (el,focus){
-    this.el = el;
-    this.tpl = null;
-    this.maskLayer = null;
+    this.el = el;// 当前引用VueComponent
+    this.tpl = null;//组件实例
+    this.maskLayer = null;//组件类
     this.init(this,el,focus);
   }
   init(_this,el,focus){
     this.maskLayer = Vue.extend({
-      template:`<div v-if="show" class="__my-mask-layer" :style="{zIndex:zIndex}" @click="handleClick"></div>`,
-      data(){
-        return {
-          show:true,
-        }
-      },
+      template:`<div class="__my-mask-layer" :style="{zIndex:zIndex}" @click="handleClick"></div>`,
       computed:{
         zIndex(){
-          return getZIndex() + 1;
+          return ZINDEX + 1;
         }
       },
       methods:{
@@ -27,10 +23,13 @@ class plugin {
         }
       }
     });
+    //创建实例并挂载到文档
+    this.tpl = new this.maskLayer().$mount().$el;
+    //当前VueComponent 控制状态
+    if ( el[focus] ) this.add();
   }
   add(){
     if (document.querySelectorAll('.__my-mask-layer').length > 0) return false;
-    this.tpl = new this.maskLayer().$mount().$el;
     document.body.appendChild(this.tpl);
   }
   less(){
@@ -38,4 +37,21 @@ class plugin {
   }
 }
 
-export default plugin;
+export default {
+  data(){
+    return {
+      maskLayer:null,
+      zIndex:ZINDEX + 2,
+    }
+  },
+  watch:{
+    focus(val){
+      if (val){
+        this.maskLayer.add();
+      }
+    }
+  },
+  mounted(){
+    this.maskLayer = new maskLayer(this,'focus');
+  }
+};

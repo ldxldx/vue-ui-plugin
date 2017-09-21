@@ -11,7 +11,7 @@ const $loadingTemplate = `
     </div>
 `;
 const plugin = {
-    name : 'l-loading',
+    name : 'my-loading',
     install  (Vue, option) {
         Vue.prototype.$loading = (op = {
                                       text: '',

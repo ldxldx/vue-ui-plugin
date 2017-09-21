@@ -83,9 +83,8 @@
             (this.parent.$props.min && this.store.length - 1 >= this.parent.$props.min && ( this.store.splice(this.store.indexOf(this.label) , 1),_allowChange = true));
           }
         } else {
-          this.store = !this.store;
           _allowChange = true;
-          this.$emit('input', this.store);
+          this.$emit('input', !this.store);
         }
         //点击样式动画
         if (!_allowChange) return;

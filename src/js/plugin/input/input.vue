@@ -29,7 +29,7 @@
                     <slot name="after"></slot>
                 </div>
                 <span class="__my-line"
-                      :class="[ripple_input.animate]"></span>
+                      :class="[lineAnimate]"></span>
             </div>
         </template>
     </div>
@@ -47,14 +47,14 @@
       }
     },
     mounted(){
-      ( this.autofocus ) && (this.focus = true, this.ripple_input.animate = 'lineIn');
+      ( this.autofocus ) && (this.focus = true, this.lineAnimate = 'lineIn');
       this.$on('open', () => {
         this.focus = true;
-        this.ripple_input.animate = 'lineIn';
+        this.lineAnimate = 'lineIn';
       });
       this.$on('close', () => {
         this.focus = false;
-        this.ripple_input.animate = 'lineOut';
+        this.lineAnimate = 'lineOut';
       })
     },
     props: {
@@ -97,7 +97,7 @@
     methods: {
       handleClick(event){
         if (this.disabled) return;
-        this.ripple_input.animate = 'lineIn';
+        this.lineAnimate = 'lineIn';
         this.focus = true;
         this.$nextTick(()=>{
           if (event.target.classList[0] === '__my-inputUiKit') {
@@ -134,7 +134,7 @@
         if (!value || value.trim() === '') {
           this.focus = false;
         }
-        this.ripple_input.animate = 'lineOut';
+        this.lineAnimate = 'lineOut';
       },
     }
   }
