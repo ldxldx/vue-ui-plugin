@@ -35,7 +35,8 @@ let serverHost = getIPAdress();
 let config = {
     entry: {
         index: path.resolve(__dirname, 'src/js/page/index.js'),
-        vendors: ['vue', 'vue-router','vue-resource','vuex'] // 需要进行单独打包的文件
+        // vendors: ['vue', 'vue-router','vue-resource','vuex'] // 需要进行单独打包的文件
+        vendors: ['vue'] // 需要进行单独打包的文件
     },
     output: {
         path: path.join(__dirname, 'dist'), //输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
