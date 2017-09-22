@@ -10,6 +10,6 @@ const APP = new Vue({
         <my-picker label="请选择时间" v-model="data"></my-picker>
     </div>`,
   data: {
-    data:true,
+    data:'2016-08-24',
   },
 });

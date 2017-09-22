@@ -1,3 +1,4 @@
+require('./index.scss');
 import Vue from 'vue';
 import getZIndex from '../tools/getZIndex';//获取body子集的最大z-index
 const ZINDEX = getZIndex();
@@ -11,6 +12,11 @@ class maskLayer {
   init(_this,el,focus){
     this.maskLayer = Vue.extend({
       template:`<div class="__my-mask-layer" :style="{zIndex:zIndex}" @click="handleClick"></div>`,
+      data(){
+        return {
+
+        }
+      },
       computed:{
         zIndex(){
           return ZINDEX + 1;
@@ -31,9 +37,13 @@ class maskLayer {
   add(){
     if (document.querySelectorAll('.__my-mask-layer').length > 0) return false;
     document.body.appendChild(this.tpl);
+    this.tpl.setAttribute('style','animation: __my-mask_animate_in .2s forwards')
   }
   less(){
-    document.body.removeChild(this.tpl);
+    this.tpl.setAttribute('style','animation: __my-mask_animate_out .2s forwards')
+    setTimeout(()=>{
+      document.body.removeChild(this.tpl);
+    },200);
   }
 }
 
