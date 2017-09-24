@@ -7,9 +7,10 @@ Vue.use(MyUikit);
 const APP = new Vue({
   el: '#app',
   template: `<div class="container">
-        <my-picker label="请选择时间" v-model="data"></my-picker>
+        <my-picker label="日期" v-model="data"></my-picker>
+        <my-button>.........</my-button>
     </div>`,
   data: {
-    data:'2016-08-24',
+    data:new Date('2016-08-22').getTime(),
   },
 });

@@ -25,7 +25,6 @@ class maskLayer {
       methods:{
         handleClick(){
           el[focus] = false;
-          _this.less();
         }
       }
     });
@@ -37,10 +36,10 @@ class maskLayer {
   add(){
     if (document.querySelectorAll('.__my-mask-layer').length > 0) return false;
     document.body.appendChild(this.tpl);
-    this.tpl.setAttribute('style','animation: __my-mask_animate_in .2s forwards')
+    this.tpl.setAttribute('style','animation: __my-mask_animate_in .2s forwards');
   }
   less(){
-    this.tpl.setAttribute('style','animation: __my-mask_animate_out .2s forwards')
+    this.tpl.setAttribute('style','animation: __my-mask_animate_out .2s forwards');
     setTimeout(()=>{
       document.body.removeChild(this.tpl);
     },200);
@@ -58,6 +57,8 @@ export default {
     focus(val){
       if (val){
         this.maskLayer.add();
+      } else {
+        this.maskLayer.less();
       }
     }
   },

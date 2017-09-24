@@ -12,73 +12,73 @@
     </button>
 </template>
 <script>
-    export default {
-        name:'my-button',
-        data () {
-            return {
-                ripple_button: {
-                    animate: false,
-                    toggle: false,
-                    style:null
-                }
-            }
-        },
-        mounted(){
-
-        },
-        props:{
-            size:{
-                type:String,//large small mini
-                default:'small',
-                validator(val){
-                    if (val === 'large' || val === 'small' || val === 'mini') {
-                        return val;
-                    }
-                }
-            },
-            type:{
-                type:String,//success warning danger info
-                validator(val){
-                    if (val === 'success' || val === 'warning' || val === 'danger' || val === 'info') {
-                        return val;
-                    }
-                }
-            },
-            disabled:{
-                type:Boolean,
-                default:false
-            },
-            fullWidth:Boolean,
-        },
-        methods: {
-            rippleClick (e) {
-                if (this.ripple_button.animate || this.disabled) return;
-                let button = e.target;
-                if (button.classList[0] === '__my-button-ripple') {
-                    let d = Math.max(button.offsetHeight, button.offsetWidth),
-                        x = (e.layerX - d / 2  ) + 'px',
-                        y = (e.layerY - d / 2 ) + 'px';
-                    this.ripple_button.style = {
-                        height: d + 'px',
-                        width: d + 'px' ,
-                        top: y ,
-                        left: x ,
-                    }
-                    this.ripple_button.animate = true;
-                    this.$nextTick(() => {
-                        setTimeout(() => {
-                            this.ripple_button.animate = false;
-                            this.$emit('click')
-                        }, 660);
-                    });
-                }
-            }
+  export default {
+    name: 'my-button',
+    data () {
+      return {
+        ripple_button: {
+          animate: false,
+          toggle: false,
+          style: null
         }
+      }
+    },
+    props: {
+      size: {
+        type: String,//large small mini
+        default: 'small',
+        validator(val){
+          if (val === 'large' || val === 'small' || val === 'mini') {
+            return val;
+          }
+        }
+      },
+      type: {
+        type: String,//success warning danger info
+        validator(val){
+          if (val === 'success' || val === 'warning' || val === 'danger' || val === 'info') {
+            return val;
+          }
+        }
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      fullWidth: Boolean,
+    },
+    methods: {
+      rippleClick (e) {
+        if (this.ripple_button.animate || this.disabled) return;
+        let button = e.target;
+        if (button.classList[0] === '__my-buttonUiKit') {
+          let d = Math.max(button.offsetHeight, button.offsetWidth),
+              x = (e.layerX - d / 2  ) + 'px',
+              y = (e.layerY - d / 2 ) + 'px';
+          this.ripple_button.style = {
+            height: d + 'px',
+            width: d + 'px',
+            top: y,
+            left: x,
+          }
+          this.ripple_button.animate = true;
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.ripple_button.animate = false;
+              this.$emit('click');
+            }, 200);
+          });
+        }
+      }
     }
+  }
 </script>
 
 <style lang="scss" scoped>
+    @import "../sass/variable";
     @import "../sass/function";
+
+
     .__my-buttonUiKit {
         border: none;
         outline: none;
@@ -94,7 +94,7 @@
         display: flex;
         justify-content: center;
         align-content: center;
-        &::before{
+        &::before {
             content: '';
             position: absolute;
             z-index: 1;
@@ -137,30 +137,32 @@
             width: 100%;
         }
         /*bgc color*/
-        background-color: #3f51b5;
-        color: #fff;
+        /*background-color: #3f51b5;*/
+        /*color: #fff;*/
+        background-color: #fff;
+        color: $defaultColor;
         &.success {
-            background-color: #13ce66;
+            background-color: $successColor;
             &:hover {
-                background-color: #42d885;
+                background-color: $successHoverColor;
             }
         }
         &.warning {
-            background-color: #f7ba2a;
+            background-color: $warningColor;
             &:hover {
-                background-color: #f9c855;
+                background-color: $warningHoverColor;
             }
         }
         &.danger {
-            background-color: #ff4949;
+            background-color: $dangerColor;
             &:hover {
-                background-color: #ff6d6d;
+                background-color: $dangerHoverColor;
             }
         }
         &.info {
-            background-color: #50bfff;
+            background-color: $infoColor;
             &:hover {
-                background-color: #73ccff;
+                background-color: $infoHoverColor;
             }
         }
         &.disabled {
@@ -168,6 +170,7 @@
             cursor: not-allowed;
         }
     }
+
     .__my-ripple {
         display: block;
         position: absolute;
@@ -176,9 +179,10 @@
         border-radius: 100%;
         transform: scale(0);
         &.animate {
-            animation: __my-button_ripple .65s linear;
+            animation: __my-button_ripple .2s linear;
         }
     }
+
     @keyframes __my-button_ripple {
         100% {
             opacity: 0;
