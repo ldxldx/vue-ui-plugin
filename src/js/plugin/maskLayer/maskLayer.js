@@ -12,11 +12,6 @@ class maskLayer {
   init(_this,el,focus){
     this.maskLayer = Vue.extend({
       template:`<div class="__my-mask-layer" :style="{zIndex:zIndex}" @click="handleClick"></div>`,
-      data(){
-        return {
-
-        }
-      },
       computed:{
         zIndex(){
           return ZINDEX + 1;

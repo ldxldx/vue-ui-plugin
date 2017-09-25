@@ -83,7 +83,7 @@
         border: none;
         outline: none;
         border-radius: 2px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+
         position: relative;
         text-transform: uppercase;
         overflow: hidden;
@@ -143,24 +143,28 @@
         color: $defaultColor;
         &.success {
             background-color: $successColor;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
             &:hover {
                 background-color: $successHoverColor;
             }
         }
         &.warning {
             background-color: $warningColor;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
             &:hover {
                 background-color: $warningHoverColor;
             }
         }
         &.danger {
             background-color: $dangerColor;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
             &:hover {
                 background-color: $dangerHoverColor;
             }
         }
         &.info {
             background-color: $infoColor;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
             &:hover {
                 background-color: $infoHoverColor;
             }

@@ -1,25 +1,29 @@
 <template>
     <div class="__my-pickerUiKit">
         <div class="__my-picker-input"
-                 :class="{
+             :class="{
                     'focus':focus || value,
                     'disabled':disabled
                  }"
-                 @click="handleClick">
-                <label class="__my-input-label">
-                    <span v-if="required" class="required">*</span>
-                    <span>{{label}}</span>
-                    <i class="__my-icon iconfont">&#xe735;</i>
-                </label>
-                <span class="__my-picker-view">{{value}}</span>
-                <span class="__my-line"
-                      :class="[lineAnimate]"></span>
-            </div>
+             @click="handleClick">
+            <label class="__my-input-label">
+                <span v-if="required" class="required">*</span>
+                <span>{{label}}</span>
+                <i class="__my-icon iconfont">&#xe735;</i>
+            </label>
+            <span class="__my-picker-view">{{viewValue}}</span>
+            <span class="__my-line"
+                  :class="[lineAnimate]"></span>
+        </div>
         <transition name="__my-pop_com">
             <div class="__my-picker-content" v-if="focus" :style="{zIndex:zIndex}">
-                <div class="__my-picker-top">
-                    <div class="__my-picker-date_year">{{year}}</div>
-                    <div class="__my-picker-date_monthDay">{{currentMonth}}-{{currentDate}} {{viewWeek}}</div>
+                <div class="__my-picker-top" @click="(jumpYear && (jumpYear = false)) || (jumpMonth && (jumpMonth = false))">
+                    <div class="__my-picker-date_year">{{currentYear}}</div>
+                    <div class="__my-picker-date_monthDay">
+                        <transition :name="`__my-picker-date_monthDay-animate`">
+                            <div v-if="switchDate">{{currentMonth}}-{{currentDate}} {{viewWeek}}</div>
+                        </transition>
+                    </div>
                 </div>
                 <div class="__my-picker-container">
                     <div class="__my-picker-date_yearMonth">
@@ -27,7 +31,8 @@
                         <div>
                             <span class="__my-picker-date_yearMonth_year" @click="changeYear">{{year}}</span>
                             &nbsp;&nbsp;&nbsp;
-                            <span class="__my-picker-date_yearMonth_month" @click="changeMonth">{{viewMonth}}</span></div>
+                            <span class="__my-picker-date_yearMonth_month" @click="changeMonth">{{viewMonth}}</span>
+                        </div>
                         <i class="iconfont" @click="addMonth">&#xe6f8;</i>
                     </div>
                     <div class="__my-picker-date_week">
@@ -39,11 +44,16 @@
                         <span>五</span>
                         <span>六</span>
                     </div>
-                    <transition :name="`__my-picker-date-${direction}-animate`">
+                    <transition :name="`__my-picker-date-${switchMonthDirection}-animate`">
                         <div class="__my-picker-date_date" v-if="switchMonth">
                             <div class="row" v-for="(_row,_rowIndex) in row">
-                                <div class="col" :class="{'active':currentYear && _col.year && Number(currentDate) === _col.date && Number(currentMonth) === Number(_col.month)}"
-                                     v-for="(_col,_colIndex) in _row" @click="selected(_col)">{{_col.date}}
+                                <div class="col"
+                                     v-for="(_col,_colIndex) in _row" @click="selected(_col)"
+                                     :class="{
+                                        'active':(currentYear === _col.year && Number(currentDate) === _col.date && currentMonth === _col.month),
+                                        'disabled': _col.disabled
+                                     }">
+                                    {{_col.date}}
                                 </div>
                             </div>
                         </div>
@@ -51,6 +61,25 @@
                     <div class="__my-picker-date_button">
                         <my-button @click="cancel">取消</my-button>
                         <my-button @click="confirm">确定</my-button>
+                    </div>
+                    <div v-if="jumpYear" class="__my-picker-date_switch_block">
+                        <div class="__my-picker-date_switch_item">
+                            <div class="__my-picker-date_switch_scroll">
+                                <div v-for="(item,index) in yearArray" :class="{'active':year === item}"
+                                     @click="selectYear(item)">{{item}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="jumpMonth" class="__my-picker-date_switch_block">
+                        <div class="__my-picker-date_switch_item">
+                            <div class="__my-picker-date_switch_scroll">
+                                <div v-for="(item,index) in monthArray"
+                                     :class="{'active':Number(month) === Number(item.value)}"
+                                     @click="selectMonth(item)">{{item.view}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,10 +99,56 @@
         focus: false,
         lineAnimate: null,
         currentTime: null,
-        time:null,
-        switchMonth:true,
-        direction:null,//next or prev
-        row: new Array([], [], [], [], [], [])
+        time: null,
+        yearArray: [],
+        monthArray: [
+          {
+            view: '一月',
+            value: '01'
+          }, {
+            view: '二月',
+            value: '02'
+          }, {
+            view: '三月',
+            value: '03'
+          }, {
+            view: '四月',
+            value: '04'
+          }, {
+            view: '五月',
+            value: '05'
+          }, {
+            view: '六月',
+            value: '06'
+          }, {
+            view: '七月',
+            value: '07'
+          }, {
+            view: '八月',
+            value: '08'
+          }, {
+            view: '九月',
+            value: '09'
+          }, {
+            view: '十月',
+            value: '10'
+          }, {
+            view: '十一月',
+            value: '11'
+          }, {
+            view: '十二月',
+            value: '12'
+          }],
+        jumpYear: false,
+        jumpMonth: false,
+        switchMonth: true,// 上一月/下一月
+        switchDate: true,//selected
+        switchYearDirection: null,//?
+        switchMonthDirection: null,//next or prev
+        switchDateDirection: true,//?
+        row: new Array([], [], [], [], [], []),
+        analysisMaxDate:null,
+        analysisMinDate:null,
       }
     },
     computed: {
@@ -184,19 +259,27 @@
         }
         return _week;
       },
-    },
-    mounted(){
-
+      viewValue(){
+        let time = new Date(this.value),
+          year = time.getFullYear(),
+          month = time.getMonth() + 1,
+          date = time.getDate();
+        if (month < 10) month = `0${month}`;
+        if (date < 10) date = `0${date}`;
+        return `${year}-${month}-${date}`;
+      },
     },
     props: {
       value: {
-        required:true,
-        type:[String,Date,Number]
+        required: true,
+        type: [String, Date, Number]
       },
-      label:[String,Number],
+      label: [String, Number],
       disabled: Boolean,
 //      disabledCondition:[]
       required: Boolean,
+      maxDate:[String, Date, Number],
+      minDate:[String, Date, Number],
     },
     watch: {
       focus(val){
@@ -204,38 +287,98 @@
       }
     },
     methods: {
+      /**
+       * 打开弹框 作为时间功能的初始化
+       */
       handleClick(){
         if (this.disabled) return;
+        //状态初始化
+        this.jumpYear = false;
+        this.jumpMonth = false;
         //获取设定/当前时间
         this.currentTime = this.time = (this.value || new Date());
-        //根据time 初始化
+        //解析maxDate minDate max必须大于min 否则抛出错误
+        (this.maxDate && (this.analysisMaxDate = this.analysisDate(this.maxDate)));
+        (this.minDate && (this.analysisMinDate = this.analysisDate(this.minDate)));
+        if (this.maxDate && this.minDate && this.analysisMaxDate <= this.analysisMinDate ) {
+          throw new Error('From: MyUiKit component picker-date, issue: maxDate 必须大于 minDate')
+        }
+        //根据time 初始化布局
         this.dateLayout();
+
         this.lineAnimate = 'lineIn';
         //弹出时间框
         this.focus = true;
       },
+      /**
+       * 打开选择年
+       */
       changeYear(){
-
+        let _nowYear = new Date().getFullYear(), _yearDiff = _nowYear - 1924, scroll, item;
+        if (this.yearArray.length < 100) {
+          this.yearArray = [_nowYear];
+          for (let i = 1; i <= _yearDiff; i++) {
+            this.yearArray.push(_nowYear + i);
+            this.yearArray.unshift(_nowYear - i);
+          }
+        }
+        this.jumpYear = true;
+        this.$nextTick(() => {
+          //将当前年定为到显示中间
+          scroll = (this.year - 1924 ) / (2 * _yearDiff);
+          item = document.querySelector('.__my-picker-date_switch_item');
+          item.scrollTop = item.firstChild.clientHeight * scroll - (item.clientHeight / 2);
+        })
+      },
+      selectYear(val){
+        this.time = `${val}/${this.month}/01`;
+        this.dateLayout();
+        this.jumpYear = false;
       },
       changeMonth(){
-
+        let scroll, item;
+        this.jumpMonth = true;
+        this.$nextTick(() => {
+          //将当前年定为到显示中间
+          scroll = Number(this.month) / 12;
+          item = document.querySelector('.__my-picker-date_switch_item');
+          item.scrollTop = item.firstChild.clientHeight * scroll - (item.clientHeight / 2);
+        })
+      },
+      selectMonth(val){
+        this.time = `${this.year}/${val.value}/01`;
+        this.dateLayout();
+        this.jumpMonth = false;
       },
       /**
        * 选择日期
        * @param _col
        */
       selected(_col){
-        this.currentTime = `${_col.year}/${_col.month}/${_col.date}`;
+        if ( _col.disabled ) return false;
+        //diff
+        if (this.currentYear === _col.year && Number(this.currentMonth) === Number(_col.month) && this.currentDate === Number(_col.date)) {
+          return false;
+        }
+        this.switchDate = false;
+        //update animate
+        let date = _col.date < 10 ? `0${_col.date}` : _col.date;
+        this.currentTime = `${_col.year}/${_col.month}/${date}`;
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.switchDate = true;
+          }, 250)
+        })
       },
       /**
        * 下一月
        */
       addMonth(){
-        this.direction = 'next';
+        this.switchMonthDirection = 'next';
         this.switchMonth = false;
-        this.$nextTick(()=>{
-          let _year = this.year,_month = Number(this.month);
-          if(_month === 12){
+        this.$nextTick(() => {
+          let _year = this.year, _month = Number(this.month);
+          if (_month === 12) {
             _year++;
             _month = 1;
           } else {
@@ -250,11 +393,11 @@
        * 上一月
        */
       lessMonth(){
-        this.direction = 'prev';
+        this.switchMonthDirection = 'prev';
         this.switchMonth = false;
-        this.$nextTick(()=>{
-          let _year = this.year,_month = Number(this.month);
-          if(_month === 1){
+        this.$nextTick(() => {
+          let _year = this.year, _month = Number(this.month);
+          if (_month === 1) {
             _year--;
             _month = 12;
           } else {
@@ -269,18 +412,32 @@
        * 重排日期
        */
       dateLayout(){
-        let _rowIndex = 0,_row = new Array([], [], [], [], [], []);
-        for (let i = 0; i < new Date(`${this.year}-${this.month}-1`).getDay(); i++) {
+        let _rowIndex = 0, _row = new Array([], [], [], [], [], []);
+        for (let i = 0; i < new Date(`${this.year}-${this.month}-01`).getDay(); i++) {
           _row[_rowIndex].push('')
         }
-        let _allDate = this.allDate(this.time);
+        let _allDate = this.allDate(this.time),_yearMonthDisabled = false,_disabled = false,_currentDate;
+        //利用 yyyy-mm-01 比对min yyyy-mm-_allDate 比对max 某一成立 则 _disabled true
+        if ( (this.min && new Date(`${this.year}/${this.month}/01`).getTime() < this.analysisMinDate) || (this.max && new Date(`${this.year}/${this.month}/${_allDate}`).getTime() > this.analysisMaxDate )) {
+          _yearMonthDisabled = true;
+          _disabled = true;
+        }
         for (let i = 1; i < _allDate; i++) {
           if (_row[_rowIndex].length === 7) _rowIndex++;
+          //若_disabled false 则对比 yyyy-mm-i 成立 disabled true
+          if (!_yearMonthDisabled) {
+            _disabled = false;
+            _currentDate = new Date(`${this.year}/${this.month}/${i<10?'0'+i:i}`).getTime();
+            if (_currentDate < this.analysisMinDate || _currentDate > this.analysisMaxDate) {
+              _disabled = true;
+            }
+          }
           _row[_rowIndex].push({
             year: this.year,
             month: this.month,
-            date: i
-          })
+            date: i,
+            disabled:_disabled,
+          });
         }
         this.row = _row;
       },
@@ -288,8 +445,9 @@
         this.focus = false;
       },
       confirm(){
-        this.$emit('input', this.currentTime.replace(/\//g,'-'));
         this.focus = false;
+        if (this.currentTime === this.value) return false;
+        this.$emit('input', this.currentTime.replace(/\//g, '-'));
       },
       /**
        * 获得总天数
@@ -301,10 +459,24 @@
         date.setMonth(Month + 1);
         date.setDate(0);
         return date.getDate();
-      }
+      },
+      /**
+       * 解析时间
+       * @param val 'yyyy-mm-dd'/'yyyy/mm/dd'/标准格林威治时间/
+       * @return {Date}
+       */
+      analysisDate(val,type){
+        let time = new Date(val),
+          year = time.getFullYear(),
+          month = time.getMonth() + 1,
+          date = time.getDate();
+        if (month < 10) month = `0${month}`;
+        if (date < 10) date = `0${date}`;
+        return new Date(`${year}/${month}/${date}`).getTime();
+      },
     },
-    components:{
-      'my-button':Button,
+    components: {
+      'my-button': Button,
     }
   }
 </script>
@@ -412,7 +584,7 @@
             top: calc(50% - 10.93rem / 2);
             left: calc(50% - 8.27rem / 2);
             width: rem(620);
-            height: rem(826);
+            min-height: rem(826);
             border-radius: rem(8);
             overflow: hidden;
             box-shadow: 0 19px 60px rgba(0, 0, 0, .298039), 0 15px 20px rgba(0, 0, 0, .219608);
@@ -433,18 +605,19 @@
                     transition: all .45s cubic-bezier(.23, 1, .32, 1);
                 }
                 .__my-picker-date_monthDay {
+                    height: rem(92);
                     font-size: rem(72);
                     user-select: none;
                     font-weight: 600;
-                    transition: all .45s cubic-bezier(.23, 1, .32, 1);
+                    overflow: hidden;
                 }
             }
             .__my-picker-container {
                 width: 100%;
-                height: calc(100% - 2.77rem);
                 padding: 0 rem(20);
                 box-sizing: border-box;
                 background-color: #fff;
+                position: relative;
                 .__my-picker-date_yearMonth {
                     height: rem(96);
                     display: flex;
@@ -459,7 +632,7 @@
                         line-height: rem(96);
                         text-align: center;
                     }
-                    &>div{
+                    & > div {
                         display: flex;
                     }
                     .__my-picker-date_yearMonth_year {
@@ -482,6 +655,7 @@
                     }
                 }
                 .__my-picker-date_date {
+                    height: rem(480);
                     font-size: rem(24);
                     font-weight: 600;
                     .row {
@@ -519,31 +693,79 @@
                                 transform: scale(1);
                             }
                         }
+                        &.disabled {
+                            opacity: .5;
+                        }
                     }
                 }
                 .__my-picker-date_button {
                     display: flex;
                     justify-content: flex-end;
-                    &>button{
+                    & > button {
                         margin: rem(10);
+                    }
+                }
+                .__my-picker-date_switch_block {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 10;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #fff;
+                    .__my-picker-date_switch_item {
+                        height: 100%;
+                        box-sizing: border-box;
+                        padding: rem(40) 0;
+                        overflow-x: hidden;
+                        overflow-y: scroll;
+                        -webkit-overflow-scrolling: touch;
+                        -webkit-mask-box-image: linear-gradient(0deg, transparent, transparent 5%, #fff 20%, #fff 80%, transparent 95%, transparent);
+                        text-align: center;
+                        font-size: rem(36);
+                    }
+                    .__my-picker-date_switch_scroll {
+                        & > div {
+                            padding: rem(15);
+                        }
+                        & > div.active {
+                            font-size: rem(48);
+                            font-weight: 700;
+                            color: $defaultColor;
+                        }
                     }
                 }
             }
         }
     }
 
+    /*选择日期切换*/
+    .__my-picker-date_monthDay-animate-enter {
+        opacity: 0;
+        transform: translateY(-60%);
+    }
 
+    .__my-picker-date_monthDay-animate-leave-active {
+        opacity: 0;
+        transform: translateY(60%);
+    }
 
+    .__my-picker-date_monthDay-animate-enter-active, .__my-picker-date_monthDay-animate-leave-active {
+        transition: all .25s cubic-bezier(.23, 1, .32, 1);
+    }
+
+    /*切换月份*/
     .__my-picker-date-prev-animate-enter {
         opacity: .3;
         transform: translateX(-100%);
     }
-    .__my-picker-date-prev-animate-enter-active {
-        transition: all .2s linear;
-    }
+
     .__my-picker-date-prev-animate-leave-active {
         opacity: .3;
         transform: translateY(100%);
+    }
+
+    .__my-picker-date-prev-animate-enter-active, .__my-picker-date-prev-animate-leave-active {
         transition: all .2s linear;
     }
 
@@ -551,12 +773,13 @@
         opacity: 0;
         transform: translateX(100%);
     }
-    .__my-picker-date-next-animate-enter-active {
-        transition: all .2s linear;
-    }
+
     .__my-picker-date-next-animate-leave-active {
-        transform: translateY(-100%);
         opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    .__my-picker-date-next-animate-enter-active, .__my-picker-date-next-animate-leave-active {
         transition: all .2s linear;
     }
 </style>
