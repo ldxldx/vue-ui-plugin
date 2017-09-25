@@ -443,11 +443,13 @@
       },
       cancel(){
         this.focus = false;
+        this.$emit('cancel');
       },
       confirm(){
         this.focus = false;
         if (this.currentTime === this.value) return false;
         this.$emit('input', this.currentTime.replace(/\//g, '-'));
+        this.$emit('change',this.currentTime.replace(/\//g, '-'));
       },
       /**
        * 获得总天数
