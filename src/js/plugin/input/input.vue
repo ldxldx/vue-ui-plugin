@@ -41,9 +41,7 @@
       return {
         focus: false,
         currentValue: this.value,
-        ripple_input: {
-          animate: null,
-        }
+        lineAnimate:null,
       }
     },
     mounted(){

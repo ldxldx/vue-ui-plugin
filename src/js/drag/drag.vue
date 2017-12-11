@@ -11,11 +11,11 @@
                 @dragenter="dragenter"
                 @dragleave="dragleave"
                 @drop="drop"></drag-template>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" ref="canvas"></canvas>
     </div>
 </template>
 <script>
-    import dragTemplate from './drag-template.vue';
+  import dragTemplate from './drag-template.vue';
   export default {
     data(){
       return {
@@ -108,12 +108,12 @@
         situation: null,// 0-互换 1-被拖拽元素作为目标元素的child
       }
     },
-    components:{
-      'drag-template':dragTemplate
+    components: {
+      'drag-template': dragTemplate
     },
     mounted(){
-       this.setWarehouse(JSON.parse(JSON.stringify(this.view)), 0);
-       this.setCanvas();
+      this.setWarehouse(JSON.parse(JSON.stringify(this.view)), 0);
+      this.setCanvas();
 
     },
     methods: {
@@ -324,7 +324,7 @@
         loop(this.view, () => {//处理完毕后重排仓库
           this.setWarehouse(JSON.parse(JSON.stringify(this.view)), 0);
           //canvas重排
-          this.$nextTick(()=>{
+          this.$nextTick(() => {
             this.setCanvas();
           })
         })
@@ -340,11 +340,11 @@
           let domLabel = document.querySelectorAll('.label');
           // console.log(domLabel)
           //遍历label 拿到其父元素data-id/leave 并二维化
-          for (let i = 0,_position; i < domLabel.length; i++) {
+          for (let i = 0, _position; i < domLabel.length; i++) {
             //拿到元素的绝对位置
             _position = this.getElementPosition(domLabel[i]);
             this.domWarehouse[domLabel[i].parentNode.dataset.id] = {
-              centerX: domLabel[i].clientWidth / 2 + _position.actualLeft ,//中心点x
+              centerX: domLabel[i].clientWidth / 2 + _position.actualLeft,//中心点x
               centerY: domLabel[i].clientHeight / 2 + _position.actualTop,//中心点y
               w: domLabel[i].clientWidth,//宽
               h: domLabel[i].clientHeight,//高
@@ -356,8 +356,8 @@
           let loop = (child) => {
             for (let i = 0; i < child.length; i++) {
               if (child[i].children && child[i].children.length > 0) {//有子集 遍历子集拿到id 进行连线
-                child[i].children.forEach((val,index)=>{
-                  this.draw(ctx, this.domWarehouse[child[i].id], this.domWarehouse[val.id] , child[i].children.length , index)
+                child[i].children.forEach((val, index) => {
+                  this.draw(ctx, this.domWarehouse[child[i].id], this.domWarehouse[val.id], child[i].children.length, index)
                 });
                 loop(child[i].children);
               }
@@ -384,11 +384,11 @@
           ctx.moveTo(_startX, _startY);//起点
         }
         //第一个和最后一个需要画
-        if(index === 0 || index === length -1) {
-          ctx.lineTo(_startX, _entY - (_entY - _startY)/2);//中转点1
-          ctx.lineTo(_entX, _entY - (_entY - _startY)/2);//中转点2
+        if (index === 0 || index === length - 1) {
+          ctx.lineTo(_startX, _entY - (_entY - _startY) / 2);//中转点1
+          ctx.lineTo(_entX, _entY - (_entY - _startY) / 2);//中转点2
         } else {
-          ctx.moveTo(_entX, _entY - (_entY - _startY)/2);
+          ctx.moveTo(_entX, _entY - (_entY - _startY) / 2);
         }
         //全部都需要画
         ctx.lineTo(_entX, _entY);
@@ -458,7 +458,8 @@
         width: 100%;
         position: relative;
     }
-    #canvas{
+
+    #canvas {
         position: absolute;
         top: 0;
         left: 0;
