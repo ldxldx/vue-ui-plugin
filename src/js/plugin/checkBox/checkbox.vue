@@ -134,6 +134,7 @@
                 font-size: rem(24);
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 transform: scale(0);
                 will-change: transform;
             }

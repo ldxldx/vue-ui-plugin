@@ -46,9 +46,10 @@
                     </div>
                     <transition :name="`__my-picker-date-${switchMonthDirection}-animate`">
                         <div class="__my-picker-date_date" v-if="switchMonth">
-                            <div class="row" v-for="(_row,_rowIndex) in row">
+                            <div class="row" v-for="(_row,_rowIndex) in row" :key="_rowIndex">
                                 <div class="col"
                                      v-for="(_col,_colIndex) in _row" @click="selected(_col)"
+                                     :key="_colIndex"
                                      :class="{
                                         'active':(currentYear === _col.year && Number(currentDate) === _col.date && currentMonth === _col.month),
                                         'disabled': _col.disabled
@@ -65,7 +66,9 @@
                     <div v-if="jumpYear" class="__my-picker-date_switch_block">
                         <div class="__my-picker-date_switch_item">
                             <div class="__my-picker-date_switch_scroll">
-                                <div v-for="(item,index) in yearArray" :class="{'active':year === item}"
+                                <div v-for="(item,index) in yearArray" 
+                                    :key="index"
+                                    :class="{'active':year === item}"
                                      @click="selectYear(item)">{{item}}
                                 </div>
                             </div>
@@ -75,6 +78,7 @@
                         <div class="__my-picker-date_switch_item">
                             <div class="__my-picker-date_switch_scroll">
                                 <div v-for="(item,index) in monthArray"
+                                     :key="index"
                                      :class="{'active':Number(month) === Number(item.value)}"
                                      @click="selectMonth(item)">{{item.view}}
                                 </div>
@@ -416,7 +420,10 @@
         for (let i = 0; i < new Date(`${this.year}-${this.month}-01`).getDay(); i++) {
           _row[_rowIndex].push('')
         }
-        let _allDate = this.allDate(this.time),_yearMonthDisabled = false,_disabled = false,_currentDate;
+        let _allDate = this.allDate(this.time),
+            _yearMonthDisabled = false,
+            _disabled = false,
+            _currentDate;
         //利用 yyyy-mm-01 比对min yyyy-mm-_allDate 比对max 某一成立 则 _disabled true
         if ( (this.min && new Date(`${this.year}/${this.month}/01`).getTime() < this.analysisMinDate) || (this.max && new Date(`${this.year}/${this.month}/${_allDate}`).getTime() > this.analysisMaxDate )) {
           _yearMonthDisabled = true;
@@ -428,7 +435,7 @@
           if (!_yearMonthDisabled) {
             _disabled = false;
             _currentDate = new Date(`${this.year}/${this.month}/${i<10?'0'+i:i}`).getTime();
-            if (_currentDate < this.analysisMinDate || _currentDate > this.analysisMaxDate) {
+            if ((this.analysisMinDate && _currentDate < this.analysisMinDate) || (this.analysisMaxDate && _currentDate > this.analysisMaxDate)) {
               _disabled = true;
             }
           }

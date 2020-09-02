@@ -25,6 +25,7 @@
                     @blur="handleBlur"
                     >
                 <option v-for="(item,index) in options"
+                        :key="optionValue(index)"
                         :value="optionValue(index)"
                         :label="item.label"
                         :disabled="item.disabled">

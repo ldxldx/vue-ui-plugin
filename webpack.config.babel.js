@@ -39,8 +39,8 @@ let config = {
         vendors: ['vue'] // 需要进行单独打包的文件
     },
     output: {
-        path: path.join(__dirname, 'dist'), //输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
-        publicPath: '/dist/',                //模板、样式、脚本、图片等资源对应的server上的路径
+        //path: path.join(__dirname, 'dist'), //输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
+        publicPath: '/',                //模板、样式、脚本、图片等资源对应的server上的路径
         filename: 'js/[name].js',            //每个页面对应的主js的生成配置
         chunkFilename: 'js/[name].asyncChunk.js?[chunkhash]'   //异步加载chunk name生成的配置
     },
@@ -91,7 +91,7 @@ let config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            filename: path.resolve(__dirname, 'dist/html/index.html'), //生成的html存放路径，相对于path
+            filename: path.resolve(__dirname, 'index.html'), //生成的html存放路径，相对于path
             template: path.resolve(__dirname, 'src/html/index.html'), //ejs模板路径,前面最好加上loader用于处理
             inject: 'body',  //js插入的位置，true/'head'/'body'/false
             chunks: ['load', 'vendors', 'vendor1', 'vendor2', 'index'],
@@ -124,9 +124,9 @@ let config = {
     ],
     //使用webpack-dev-server
     devServer: {
-        contentBase: path.join(__dirname, "/"),
-        host: serverHost,
-        port: 3000, //默认3030
+        // contentBase: path.join(__dirname, "/"),
+        // host: serverHost,
+        port: 3100, //默认3030
         inline: true, //可以监控js变化
         hot: true//热启动
     },

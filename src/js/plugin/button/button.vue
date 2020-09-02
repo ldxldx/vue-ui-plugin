@@ -2,7 +2,7 @@
     <button @click="rippleClick" class="__my-buttonUiKit"
             :class="{
                 [size]:size,
-            'disabled':disabled,
+              'disabled':disabled,
                 [type]:type,
                 'fullWidth':fullWidth
             }"
@@ -66,7 +66,7 @@
             setTimeout(() => {
               this.ripple_button.animate = false;
               this.$emit('click');
-            }, 200);
+            }, 300);
           });
         }
       }
@@ -80,6 +80,8 @@
 
 
     .__my-buttonUiKit {
+        // 谷歌内核浏览器 移动端点击会有蓝色背景
+        -webkit-tap-highlight-color:rgba(255,0,0,0);
         border: none;
         outline: none;
         border-radius: 2px;
@@ -93,7 +95,7 @@
         text-decoration: none;
         display: flex;
         justify-content: center;
-        align-content: center;
+        align-items: center;
         &::before {
             content: '';
             position: absolute;
@@ -183,7 +185,7 @@
         border-radius: 100%;
         transform: scale(0);
         &.animate {
-            animation: __my-button_ripple .2s linear;
+            animation: __my-button_ripple .3s linear;
         }
     }
 
